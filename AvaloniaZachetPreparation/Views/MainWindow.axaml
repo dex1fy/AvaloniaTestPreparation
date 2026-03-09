@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaZachetPreparation.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaZachetPreparation.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="AvaloniaZachetPreparation">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+  <ScrollViewer Margin="10"
+                Padding="0,0,14,0">
+      <ItemsControl ItemsSource="{Binding Cards}">
+          <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ProductCardVm">
+                  <Border Margin="0, 0, 0, 12"
+                          Padding="14"
+                          Background="#D2DFFF"
+                          BorderBrush="#355CBD"
+                          BorderThickness="1"
+                          CornerRadius="8">
+                      <Grid ColumnDefinitions="*, Auto">
+                          
+                          <StackPanel Spacing="4">
+                              <TextBlock FontSize="24" FontWeight="SemiBold">
+                                  <Run Text="{Binding Type}"/>
+                                  <Run Text=" | "/>
+                                  <Run Text="{Binding ProductName}"/>
+                              </TextBlock>
+                              
+                              <TextBlock Text="{Binding Article, StringFormat='Артикул: {0}'}" FontSize="18"/> 
+                              <TextBlock Text="{Binding MinCostPartner, StringFormat='Минимальнвя стомость для партнера: {0}'}" FontSize="18"/>
+                              <TextBlock Text="{Binding MainMaterial, StringFormat='Основной материал: {0}'}" FontSize="18"/>
+                          </StackPanel>
+                          
+                          <TextBlock Grid.Column="1"
+                                     VerticalAlignment="Top"
+                                     Margin="24, 0,0,0"
+                                     FontSize="22"
+                                     FontWeight="SemiBold"
+                                     Text="{Binding ProductTime, StringFormat='Время изготовления: {0}'}"/>
+                      </Grid>
+                  </Border>
+              </DataTemplate>
+          </ItemsControl.ItemTemplate>
+      </ItemsControl>
+  </ScrollViewer>
+
+</Window>
