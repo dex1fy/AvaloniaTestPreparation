@@ -1,8 +1,11 @@
 ﻿bin/
 obj/
-
+**/bin/
+**/obj/
 .vs/
 .idea/
+**/.idea/
+
 .vscode/
 
 *.user
