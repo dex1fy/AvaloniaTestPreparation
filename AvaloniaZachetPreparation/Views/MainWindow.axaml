@@ -1,56 +1,109 @@
-<Window xmlns="https://github.com/avaloniaui"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AvaloniaZachetPreparation.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="AvaloniaZachetPreparation.Views.MainWindow"
+        x:Name="Root"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="AvaloniaZachetPreparation">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-  <ScrollViewer Margin="10"
-                Padding="0,0,14,0">
-      <ItemsControl ItemsSource="{Binding Cards}">
-          <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="vm:ProductCardVm">
-                  <Border Margin="0, 0, 0, 12"
-                          Padding="14"
-                          Background="#D2DFFF"
+    <!-- Шаг 1: общий контейнер окна со списком карточек. -->
+    <Grid RowDefinitions="Auto,*"
+          Margin="10">
+        <!-- Шаги 3-5: панель управления (поиск, фильтр, сортировка). -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="*,Auto"
+              Margin="0,0,14,12">
+            <!-- Шаг 3: поиск по наименованию продукта. -->
+            <TextBox Grid.Column="0"
+                     Watermark="Поиск по наименованию"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     Background="#FFFFFF"
+                     Foreground="#000000"
+                     BorderBrush="#355CBD"
+                     BorderThickness="1"
+                     Margin="0,0,10,0"/>
+
+            <!-- Шаги 4-5: фильтр и сортировка справа. -->
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="10">
+                <!-- Шаг 4: фильтр по типу продукта. -->
+                <ComboBox Width="180"
+                          ItemsSource="{Binding AvailableTypes}"
+                          SelectedItem="{Binding SelectedType, Mode=TwoWay}"
+                          Background="#FFFFFF"
+                          Foreground="#000000"
                           BorderBrush="#355CBD"
-                          BorderThickness="1"
-                          CornerRadius="8">
-                      <Grid ColumnDefinitions="*, Auto">
-                          
-                          <StackPanel Spacing="4">
-                              <TextBlock FontSize="24" FontWeight="SemiBold">
-                                  <Run Text="{Binding Type}"/>
-                                  <Run Text=" | "/>
-                                  <Run Text="{Binding ProductName}"/>
-                              </TextBlock>
-                              
-                              <TextBlock Text="{Binding Article, StringFormat='Артикул: {0}'}" FontSize="18"/> 
-                              <TextBlock Text="{Binding MinCostPartner, StringFormat='Минимальнвя стомость для партнера: {0}'}" FontSize="18"/>
-                              <TextBlock Text="{Binding MainMaterial, StringFormat='Основной материал: {0}'}" FontSize="18"/>
-                          </StackPanel>
-                          
-                          <TextBlock Grid.Column="1"
-                                     VerticalAlignment="Top"
-                                     Margin="24, 0,0,0"
-                                     FontSize="22"
-                                     FontWeight="SemiBold"
-                                     Text="{Binding ProductTime, StringFormat='Время изготовления: {0}'}"/>
-                      </Grid>
-                  </Border>
-              </DataTemplate>
-          </ItemsControl.ItemTemplate>
-      </ItemsControl>
-  </ScrollViewer>
+                          BorderThickness="1"/>
+
+                <!-- Шаг 5: сортировка по минимальной стоимости. -->
+                <ComboBox Width="240"
+                          ItemsSource="{Binding SortOptions}"
+                          SelectedItem="{Binding SelectedSort, Mode=TwoWay}"
+                          Background="#FFFFFF"
+                          Foreground="#000000"
+                          BorderBrush="#355CBD"
+                          BorderThickness="1"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Шаг 1: прокручиваемый список карточек. -->
+        <ScrollViewer Grid.Row="1"
+                      Padding="0,0,14,0">
+            <ItemsControl ItemsSource="{Binding Cards}">
+                <ItemsControl.ItemTemplate>
+                    <!-- Шаг 1: шаблон одной карточки продукта. -->
+                    <DataTemplate x:DataType="vm:ProductCardVm">
+                        <Border Margin="0,0,0,12"
+                                Padding="14"
+                                Background="#D2DFFF"
+                                BorderBrush="#355CBD"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Spacing="4">
+                                    <TextBlock FontSize="24" FontWeight="SemiBold">
+                                        <Run Text="{Binding Type}"/>
+                                        <Run Text=" | "/>
+                                        <Run Text="{Binding ProductName}"/>
+                                    </TextBlock>
+
+                                    <TextBlock Text="{Binding Article, StringFormat='Артикул: {0}'}" FontSize="18"/>
+                                    <TextBlock Text="{Binding MinCostPartner, StringFormat='Минимальная стоимость для партнера: {0}'}" FontSize="18"/>
+                                    <TextBlock Text="{Binding MainMaterial, StringFormat='Основной материал: {0}'}" FontSize="18"/>
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="1"
+                                           VerticalAlignment="Top"
+                                           Margin="24,0,0,0"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding ProductTime, StringFormat='Время изготовления: {0}'}"/>
+
+                                <!-- Шаг 6: удаление продукта из БД. -->
+                                <Button Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Content="Удалить"
+                                        Command="{ReflectionBinding #Root.DataContext.DeleteProductCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="#355CBD"
+                                        Foreground="#FFFFFF"
+                                        BorderBrush="#355CBD"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
 
 </Window>

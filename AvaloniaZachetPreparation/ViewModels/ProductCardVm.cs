@@ -2,6 +2,7 @@
 
 public class ProductCardVm
 {
+    public int Id { get; set; }
     public string Type { get; set; } = "";
     public string ProductName { get; set; } = "";
     public int ProductTime { get; set; }
